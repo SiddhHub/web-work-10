@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Public API Demo - Advice Generator</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            width: 420px;
+            margin: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1e7e34;
+        }
+
+        #loading {
+            display: none;
+            color: blue;
+            margin-top: 15px;
+        }
+
+        #advice {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        #error {
+            color: red;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Random Advice Generator</h2>
+
+    <button onclick="getAdvice()">Get Advice</button>
+
+    <p id="loading">Loading...</p>
+    <p id="advice"></p>
+    <p id="error"></p>
+</div>
+
+<script>
+    function getAdvice() {
+
+        // DOM elements
+        const loading = document.getElementById("loading");
+        const advice = document.getElementById("advice");
+        const error = document.getElementById("error");
+
+        // Reset previous content
+        advice.innerText = "";
+        error.innerText = "";
+
+        // Show loading indicator
+        loading.style.display = "block";
+
+        // Fetch data from public API (CORS enabled)
+        fetch("https://api.adviceslip.com/advice")
+            .then(response => {
+
+                // Check HTTP response status
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+
+                // Convert response to JSON
+                return response.json();
+            })
+            .then(data => {
+
+                // Extract required field from JSON
+                advice.innerText = `"${data.slip.advice}"`;
+            })
+            .catch(err => {
+
+                // Handle network or API errors
+                error.innerText = "Error fetching advice. Please try again.";
+                console.error(err);
+            })
+            .finally(() => {
+
+                // Hide loading indicator
+                loading.style.display = "none";
+            });
+    }
+</script>
+
+</body>
+</html>
